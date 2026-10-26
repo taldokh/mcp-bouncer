@@ -1,0 +1,33 @@
+{
+  "name": "mcp-bouncer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "inspect": "npx @modelcontextprotocol/inspector npx tsx src/index.ts",
+    "dev:fake-server": "tsx examples/fake-server/index.ts",
+    "inspect:fake": "npx @modelcontextprotocol/inspector npx tsx examples/fake-server/index.ts",
+    "build": "tsc",
+    "start": "node dist/src/index.js",
+    "test": "node --test --import tsx"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "zod": "^4.6.7"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true
+  }
+}
