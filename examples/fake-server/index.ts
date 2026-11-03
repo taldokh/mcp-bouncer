@@ -4,10 +4,6 @@ import { getOrderStatus, deleteOrder, getCustomer, getDocumentsList, readDocumen
 import * as z from 'zod/v4';
 
 
-interface AlertsResponse {
-    features: { properties: { event?: string; headline?: string } }[];
-}
-
 function createServer(): McpServer {
     const server = new McpServer({ name: 'ShopCo', version: '1.0.0' });
 
