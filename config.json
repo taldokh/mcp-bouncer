@@ -1,3 +1,6 @@
 {
-    "MCP_PATH": "examples/fake-server/index.ts"
+    "upstream": {
+        "command": "npx",
+        "args": ["tsx", "examples/fake-server/index.ts"]
+    }   
 }

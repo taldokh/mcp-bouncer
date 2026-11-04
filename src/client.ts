@@ -1,13 +1,19 @@
 import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
-import config from '../config.json' with { type: 'json' };
 
-export const client = new Client({ name: 'my-first-client', version: '1.0.0' });
+export interface UpstreamConfig {
+    command: string;
+    args?: string[];
+}
 
-const transport = new StdioClientTransport({
-    command: 'npx',
-    args: ['tsx', config.MCP_PATH],
-});
+export async function connectUpstream(cfg: UpstreamConfig): Promise<Client> { 
+    const client = new Client({ name: 'mcp-bouncer-client', version: '1.0.0' });
+    const transport = new StdioClientTransport({
+        command: cfg.command,
+        args: cfg.args
+    });
 
-await client.connect(transport);
+    await client.connect(transport);
 
+    return client;
+ }

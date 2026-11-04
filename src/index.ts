@@ -1,6 +1,10 @@
 import { McpServer, fromJsonSchema, type JsonSchemaType } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
-import { client } from './client.js';
+import { connectUpstream } from './client.js';
+import config from '../config.json' with { type: 'json' };
+
+
+const client = await connectUpstream({ command: config.upstream.command, args: config.upstream.args });
 
 const upStreamName = client.getServerVersion()?.name ?? 'upstream';
 const { tools } = await client.listTools();
@@ -12,8 +16,11 @@ function createServer(): McpServer {
         server.registerTool(
             tool.name,
             {
+                title: tool.title,
                 description: tool.description,
-                inputSchema: fromJsonSchema(tool.inputSchema as JsonSchemaType)
+                annotations: tool.annotations,
+                inputSchema: fromJsonSchema(tool.inputSchema as JsonSchemaType),
+                ...(tool.outputSchema && { outputSchema: fromJsonSchema(tool.outputSchema as JsonSchemaType) }),
             },
             async ( input ) => {
                 const result = await client.callTool({ name: tool.name, arguments: input as Record<string, unknown> });
@@ -27,4 +34,3 @@ function createServer(): McpServer {
 
 
 void serveStdio(createServer);
-console.error('ShopCo MCP server running on stdio');
