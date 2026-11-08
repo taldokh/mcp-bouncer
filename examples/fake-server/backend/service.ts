@@ -15,6 +15,27 @@ export function deleteOrder(orderId: string): void {
     if (!orders.delete(orderId)) throw new NotFoundError(`Order ${orderId} not found`);
 }
 
+export function cancelOrder(orderId: string): { orderId: string; status: OrderStatus } {
+    const order = orders.get(orderId);
+    if (!order) throw new NotFoundError(`Order ${orderId} not found`);
+    order.status = 'cancelled';
+    return { orderId: order.orderId, status: order.status };
+}
+
+export function listCustomerOrders(customerId: string): { orderId: string; status: OrderStatus }[] {
+    if (!customers.has(customerId)) throw new NotFoundError(`Customer ${customerId} not found`);
+    return [...orders.values()]
+        .filter(order => order.customerId === customerId)
+        .map(({ orderId, status }) => ({ orderId, status }));
+}
+
+export function getShippingOptions(): { name: string; days: string; price: number }[] {
+    return [
+        { name: 'standard', days: '3-5', price: 0 },
+        { name: 'express', days: '1-2', price: 15 }
+    ];
+}
+
 export function getCustomer(customerId: string): Customer {
     const customer = customers.get(customerId);
     if (!customer) throw new NotFoundError(`Customer ${customerId} not found`);
@@ -42,6 +63,6 @@ export function sendEmail(input: z.input<typeof SendEmailInput>): Email {
     const { to, subject, body } = SendEmailInput.parse(input);
     const email = { id: randomUUID(), to, subject, body, sentAt: new Date().toISOString() };
     outbox.push(email);
-    console.log(`[email] to=${to} subject="${subject}"`);
+    console.error(`[email] to=${to} subject="${subject}"`);
     return email;
 }

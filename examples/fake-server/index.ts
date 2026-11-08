@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
-import { getOrderStatus, deleteOrder, getCustomer, getDocumentsList, readDocument, sendEmail } from './backend/service.js';
+import { getOrderStatus, deleteOrder, cancelOrder, listCustomerOrders, getShippingOptions, getCustomer, getDocumentsList, readDocument, sendEmail } from './backend/service.js';
 import * as z from 'zod/v4';
 
 
@@ -26,7 +26,7 @@ function createServer(): McpServer {
         {
             description: 'Delete a specific order',
             inputSchema: z.object({
-                orderId: z.string().regex(/^\d+$/, 'Order IDs are numeric, e.g. 1001').describe('The ID of the order to delete')
+                orderId: z.string().regex(/^\d+$/, 'Order IDs are numeric, e.g. 1001').describe('The ID of the order to delete.')
             })
         },
         async ({ orderId }) => {
@@ -88,6 +88,46 @@ function createServer(): McpServer {
         async ({ to, subject, body }) => {
             sendEmail({ to, subject, body });
             return { content: [{ type: 'text', text: 'Email sent successfully' }] };
+        }
+    );
+
+    server.registerTool(
+        'list-customer-orders',
+        {
+            description: 'List all orders of a specific customer',
+            inputSchema: z.object({
+                customerId: z.string().regex(/^c\d+$/, 'Customer IDs look like c1').describe('The ID of the customer whose orders to list')
+            })
+        },
+        async ({ customerId }) => {
+            const customerOrders = listCustomerOrders(customerId);
+            return { content: [{ type: 'text', text: `Orders of customer ${customerId}: ${JSON.stringify(customerOrders)}` }] };
+        }
+    );
+
+    server.registerTool(
+        'get-shipping-options',
+        {
+            description: 'Get the available shipping options with their delivery times and prices',
+            inputSchema: z.object({})
+        },
+        async ({ }) => {
+            const options = getShippingOptions();
+            return { content: [{ type: 'text', text: `Shipping options: ${JSON.stringify(options)}` }] };
+        }
+    );
+
+    server.registerTool(
+        'cancel-order',
+        {
+            description: 'Cancel a specific order',
+            inputSchema: z.object({
+                orderId: z.string().regex(/^\d+$/, 'Order IDs are numeric, e.g. 1001').describe('The ID of the order to cancel')
+            })
+        },
+        async ({ orderId }) => {
+            const { status } = cancelOrder(orderId);
+            return { content: [{ type: 'text', text: `Order ${orderId} is now ${status}` }] };
         }
     );
 
