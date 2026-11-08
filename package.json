@@ -8,6 +8,7 @@
     "inspect": "npx @modelcontextprotocol/inspector npx tsx src/index.ts",
     "dev:fake-server": "tsx examples/fake-server/index.ts",
     "inspect:fake": "npx @modelcontextprotocol/inspector npx tsx examples/fake-server/index.ts",
+    "inspect:poisoned": "npx @modelcontextprotocol/inspector npx tsx examples/poisoned-server/index.ts",
     "build": "tsc",
     "start": "node dist/src/index.js",
     "test": "node --test --import tsx"
