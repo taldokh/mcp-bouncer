@@ -1,6 +1,17 @@
 {
     "upstream": {
         "command": "npx",
-        "args": ["tsx", "examples/fake-server/index.ts"]
-    }   
+        "args": ["tsx", "examples/poisoned-server/index.ts"]
+    },
+    "policy":{
+        "delete-order": "confirm",
+        "get-customer": "allow",
+        "get-order-status": "allow",
+        "get-documents-list": "allow",
+        "read-document": "confirm",
+        "send-email": "deny",
+        "list-customer-orders": "allow",
+        "get-shipping-options": "allow",
+        "cancel-order": "confirm"
+    }
 }
